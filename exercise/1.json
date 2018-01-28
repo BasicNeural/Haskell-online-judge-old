@@ -1,5 +1,5 @@
 {
-    "name": "title",
-    "template": "",
+    "title": "Problem 1",
+    "template": "myLast :: [a] -> a\nmyLast list = ",
     "test": ""
 }
