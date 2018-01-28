@@ -14,19 +14,19 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
-var server = app.listen(4000, function(){
-    console.log("Express server has started on port 4000")
+let ExpressServer = app.listen(4000, function(){
+    console.log('Express server has started on port 4000')
 });
 
-var server = http.createServer(function(request, response) {
+let SocketServer = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
 });
-server.listen(8080, function() { });
+SocketServer.listen(8080, function() { });
 
 // create the server
 wsServer = new WebSocketServer({
-  httpServer: server
+  httpServer: SocketServer
 });
 
 // WebSocket server
@@ -36,6 +36,7 @@ wsServer.on('request', function(request) {
   //connection event handler
   connection.on('message', function(message) {
     let msg = JSON.parse(message.utf8Data);
+    console.log('published Data' + msg);
     
     let containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
     fs.writeFileSync(`~/source/${containerName}.hs`, msg.source);
@@ -50,24 +51,27 @@ wsServer.on('request', function(request) {
       .then((result) => {
         let stderr = result.stderr;
 	      if (stderr != '') {
-          var jsonObj = new Object();
-          jsonObj.status = false;
-          jsonObj.message = 'Compile error';
-          connection.sendUTF(JSON.stringify(jsonObj));
+          let responseMsg = {
+            status: false,
+            message = 'Compile error'
+          };
+          connection.sendUTF(JSON.stringify(responseMsg));
         }
         else {
           return exec(`docker exec ${containerName} ./root/a.out`)
             .then((result) => {
               if (result.stderr != '') {
-                var jsonObj = new Object();
-                jsonObj.status = false;
-                jsonObj.message = 'Fail';
-                connection.sendUTF(JSON.stringify(jsonObj));
+                let responseMsg = {
+                  status: false,
+                  message = 'Compile error'
+                };
+                connection.sendUTF(JSON.stringify(responseMsg));
               }
               else {
-                var jsonObj = new Object();
-                jsonObj.status = true;
-                connection.sendUTF(JSON.stringify(jsonObj));
+                let responseMsg = {
+                  status: true
+                };
+                connection.sendUTF(JSON.stringify(responseMsg));
               }
             });
         }
