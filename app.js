@@ -42,11 +42,11 @@ wsServer.on('request', function(request) {
     let containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
     let testSourceBuf = fs.readFileSync(`exercise/${msg.id}.json`, 'utf8');
     let testSource = JSON.parse(testSourceBuf);
-    fs.writeFileSync(`~/source/${containerName}.hs`, msg.source + testSource.test);
+    fs.writeFileSync(`${process.env.HOME}/source/${containerName}.hs`, msg.source + testSource.test);
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {
-        return exec(`docker cp ${process.env.HOME}/source/${containerName}.hs ${containerName}:/root/`);
+        return exec(`docker cp ~/source/${containerName}.hs ${containerName}:/root/`);
       })
       .then((result) => {
         return exec(`docker exec ${containerName} ghc /root/${containerName}.hs -o /root/a.out`);
