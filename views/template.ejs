@@ -14,8 +14,6 @@
         <p id='status'>
         </p>
         <script type='text/javascript'>
-            var debugTextArea = document.getElementById('debugTextArea');
-
             function sendMessage() {
                 initWebSocket();
             }
@@ -30,6 +28,7 @@
                     websocket = new WebSocket('ws://ten.iptime.org:8080');
                     websocket.onopen = function (evt) {
                         var msg = {
+                            id: <%= id %>
                             source : document.getElementById('source').value ++ '\n' ++ testSource
                         }
                         if ( websocket != null && document.getElementById('source').value != '') {
