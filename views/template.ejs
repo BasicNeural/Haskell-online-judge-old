@@ -29,7 +29,7 @@
                     websocket.onopen = function (evt) {
                         var msg = {
                             id: <%= id %>
-                            source : document.getElementById('source').value ++ '\n' ++ testSource
+                            source : document.getElementById('source').value
                         }
                         if ( websocket != null && document.getElementById('source').value != '') {
                             console.log('send');
