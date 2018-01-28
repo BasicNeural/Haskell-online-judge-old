@@ -1,24 +1,24 @@
-var WebSocketServer = require('websocket').server;
+let WebSocketServer = require('websocket').server;
 
-var exec = require('child-process-promise').exec;
+let exec = require('child-process-promise').exec;
 
-var fs = require('fs');
+let fs = require('fs');
 
-var http = require('http');
+let http = require('http');
 
-var express = require('express');
-var app = express();
-var router = require('./router/main')(app);
+let express = require('express');
+let app = express();
+let router = require('./router/main')(app);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
-var server = app.listen(4000, function(){
+let server = app.listen(4000, function(){
     console.log("Express server has started on port 4000")
 });
 
-var server = http.createServer(function(request, response) {
+let server = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
 });
@@ -31,42 +31,44 @@ wsServer = new WebSocketServer({
 
 // WebSocket server
 wsServer.on('request', function(request) {
-  var connection = request.accept(null, request.origin);
+  let connection = request.accept(null, request.origin);
 
   //connection event handler
   connection.on('message', function(message) {
-    var msg = JSON.parse(message.utf8Data);
-    var lang = msg.language;
-    var command = null;
-    var extention = null;
-    if (lang == 'C') {
-      command = 'gcc';
-      extention = 'c';
-    }
-    else if (lang == 'Haskell'){
-      command = 'ghc';
-      extention = 'hs';
-    }
+    let msg = JSON.parse(message.utf8Data);
     
-    var containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
-    fs.writeFileSync(`~/source/${containerName}.${extention}`, msg.source);
+    let containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
+    fs.writeFileSync(`~/source/${containerName}.hs`, msg.source);
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {
-        return exec(`docker cp /home/pi/${containerName}.${extention} ${containerName}:/root/`);
+        return exec(`docker cp /home/pi/${containerName}.hs ${containerName}:/root/`);
       })
       .then((result) => {
-        return exec(`docker exec ${containerName} ${command} /root/${containerName}.${extention} -o /root/a.out`);
+        return exec(`docker exec ${containerName} ghc /root/${containerName}.hs -o /root/a.out`);
       })
       .then((result) => {
-        var stderr = result.stderr;
-	      if (stderr != "") {
-          connection.sendUTF(stderr);
+        let stderr = result.stderr;
+	      if (stderr != '') {
+          var jsonObj = new Object();
+          jsonObj.status = false;
+          jsonObj.message = 'Compile error';
+          connection.sendUTF(JSON.stringify(jsonObj));
         }
         else {
           return exec(`docker exec ${containerName} ./root/a.out`)
             .then((result) => {
-              connection.sendUTF(result.stdout);
+              if (result.stderr != '') {
+                var jsonObj = new Object();
+                jsonObj.status = false;
+                jsonObj.message = 'Fail';
+                connection.sendUTF(JSON.stringify(jsonObj));
+              }
+              else {
+                var jsonObj = new Object();
+                jsonObj.status = true;
+                connection.sendUTF(JSON.stringify(jsonObj));
+              }
             });
         }
       })
