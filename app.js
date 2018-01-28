@@ -40,7 +40,9 @@ wsServer.on('request', function(request) {
     console.log('published Data' + msg);
     
     let containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
-    fs.writeFileSync(`~/source/${containerName}.hs`, msg.source);
+    let testSourceBuf = fs.readFileSync(`exercise/${req.params.id}.json`, 'utf8');
+    let testSource = JSON.parse(testSourceBuf);
+    fs.writeFileSync(`~/source/${containerName}.hs`, msg.source + testSource.test);
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {

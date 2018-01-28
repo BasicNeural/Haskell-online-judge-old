@@ -6,12 +6,12 @@ module.exports = function(app)
         res.render('index.html')
      });
      app.get('/exercise/:id', function(req,res) {
-        let buf = fs.readFileSync(`exercise/${req.params.id}.json`, 'utf8')
+        let buf = fs.readFileSync(`exercise/${req.params.id}.json`, 'utf8');
         let souce = JSON.parse(buf);
         res.render('template', {
+            id: req.params.id,
             title: souce.title,
-            template: souce.template,
-            test: souce.test
+            template: souce.template
         });
      });
 }
