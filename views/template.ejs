@@ -6,17 +6,13 @@
         <h1>Online Compiler!</h1>
         </p>
         <p>
-            <textarea id="source" style="width:400px;height:200px;"></textarea>
-        </p>
-        <p>
-            <button onClick="sendMessage();">Compile!</button>
-        </p>
-        <p>
-            <textarea id="debugTextArea" onFocus="this.blur()" style="width:400px;height:200px;">
-                <%= template %>
+            <textarea id="source" style="width:400px;height:200px;">
+            <%= template %>
             </textarea>
         </p>
-
+        <p>
+            <button onClick="sendMessage();">Run!</button>
+        </p>
         <script type="text/javascript">
             var debugTextArea = document.getElementById("debugTextArea");
 
