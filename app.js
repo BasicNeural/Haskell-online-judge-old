@@ -32,6 +32,7 @@ wsServer = new WebSocketServer({
 // WebSocket server
 wsServer.on('request', function(request) {
   let connection = request.accept(null, request.origin);
+  console.log('WebScoket server started');
 
   //connection event handler
   connection.on('message', function(message) {
@@ -79,7 +80,6 @@ wsServer.on('request', function(request) {
       .then((result) => {
         exec(`docker stop ${containerName}; docker rm ${containerName}; rm /home/pi/${containerName}.*`);
       });
-
   });
 
   connection.on('close', function(connection) {
