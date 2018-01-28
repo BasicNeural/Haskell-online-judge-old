@@ -1,5 +1,5 @@
 {
     "title": "Problem 1",
     "template": "myLast :: [a] -> a\nmyLast list = ",
-    "test": "main :: IO\nmain = do\n   putStrLn \"asdasd\""
+    "test": "main :: IO\nmain = do\n   putStrLn \"HELLO\""
 }
