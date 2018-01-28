@@ -52,23 +52,14 @@ wsServer.on('request', function(request) {
         return exec(`docker exec ${containerName} ghc /root/${containerName}.hs -o /root/a.out`);
       })
       .then((result) => {
-        let stderr = result.stderr;
-	      if (stderr != '') {
-          let responseMsg = {
-            status: false,
-            message: 'Compile error'
-          };
-          connection.sendUTF(JSON.stringify(responseMsg));
-        }
-        else {
-          return exec(`docker exec ${containerName} ./root/a.out`)
-            .then((result) => {
-              if (result.stderr != '') {
-                let responseMsg = {
-                  status: false,
-                  message: 'Compile error'
-                };
-                connection.sendUTF(JSON.stringify(responseMsg));
+        return exec(`docker exec ${containerName} ./root/a.out`)
+          .then((result) => {
+            if (result.stderr != '') {
+              let responseMsg = {
+               status: false,
+                message: 'Compile error'
+              };
+              connection.sendUTF(JSON.stringify(responseMsg));
               }
               else {
                 let responseMsg = {
@@ -76,8 +67,15 @@ wsServer.on('request', function(request) {
                 };
                 connection.sendUTF(JSON.stringify(responseMsg));
               }
-            });
-        }
+          }
+        ,(error) => {
+            let responseMsg = {
+              status: false,
+              message: 'Compile error'
+            };
+            connection.sendUTF(JSON.stringify(responseMsg));
+          }
+        )
       })
       .then((result) => {
         exec(`docker stop ${containerName}; docker rm ${containerName}; rm /home/pi/${containerName}.*`);
