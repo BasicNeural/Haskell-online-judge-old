@@ -6,7 +6,8 @@ module.exports = function(app)
         res.render('index.html')
      });
      app.get('/exercise/:id', function(req,res) {
-        let souce = JSON.parse(fs.writeFileSync(`./exercise/${req.params.id}.json`));
+        let buf = fs.writeFileSync(`./exercise/${req.params.id}.json`, 'utf8')
+        let souce = JSON.parse(buf);
         res.render('template', {
             title: souce.title,
             template: souce.template,
