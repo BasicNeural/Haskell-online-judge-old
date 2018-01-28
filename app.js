@@ -14,11 +14,11 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
-let server = app.listen(4000, function(){
+var server = app.listen(4000, function(){
     console.log("Express server has started on port 4000")
 });
 
-let server = http.createServer(function(request, response) {
+var server = http.createServer(function(request, response) {
   // process HTTP request. Since we're writing just WebSockets
   // server we don't have to implement anything.
 });
