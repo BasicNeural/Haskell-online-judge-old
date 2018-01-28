@@ -40,7 +40,7 @@ wsServer.on('request', function(request) {
     console.log('published Data' + msg);
     
     let containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
-    let testSourceBuf = fs.readFileSync(`exercise/${req.params.id}.json`, 'utf8');
+    let testSourceBuf = fs.readFileSync(`exercise/${msg.id}.json`, 'utf8');
     let testSource = JSON.parse(testSourceBuf);
     fs.writeFileSync(`~/source/${containerName}.hs`, msg.source + testSource.test);
     //compile source and execute output program
