@@ -53,7 +53,7 @@ wsServer.on('request', function(request) {
 	      if (stderr != '') {
           let responseMsg = {
             status: false,
-            message = 'Compile error'
+            message: 'Compile error'
           };
           connection.sendUTF(JSON.stringify(responseMsg));
         }
@@ -63,7 +63,7 @@ wsServer.on('request', function(request) {
               if (result.stderr != '') {
                 let responseMsg = {
                   status: false,
-                  message = 'Compile error'
+                  message: 'Compile error'
                 };
                 connection.sendUTF(JSON.stringify(responseMsg));
               }
